@@ -88,6 +88,22 @@ class Convertor {
   }
 
   /**
+   * Remove 'onload' attribute of svg tag
+   * @param {string} markdown markdown text
+   * @returns {string} replaced markdown text
+   * @private
+   */
+  _removeSvgOnloadProp(markdown) {
+    const onloadStripeRegex = /(<svg[^>]*)(onload\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
+
+    while (onloadStripeRegex.exec(markdown)) {
+      markdown = markdown.replace(onloadStripeRegex, '$1$3');
+    }
+
+    return markdown;
+  }
+
+  /**
    * Remove BR's data-tomark-pass attribute text when br in code element
    * @param {string} renderedHTML Rendered HTML string from markdown editor
    * @returns {string}
@@ -143,7 +159,7 @@ class Convertor {
 
   initHtmlSanitizer() {
     this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
-      htmlSanitizer(html, true)
+      htmlSanitizer(this._removeSvgOnloadProp(html), true)
     );
   }
 
